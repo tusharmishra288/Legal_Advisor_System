@@ -4,6 +4,9 @@ emoji: ⚖️
 colorFrom: blue
 colorTo: indigo
 sdk: docker
+build_context: .
+dockerfile: deployment/Dockerfile
+app_port: 7860
 pinned: false
 ---
 
