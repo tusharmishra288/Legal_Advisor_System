@@ -1,0 +1,54 @@
+# --- Base AI & Tensor Framework (For LOCAL)---
+# Note: For GPU support, uncomment below line : 
+#  --extra-index-url https://download.pytorch.org/whl/cu126
+# For CPU-only support, uncomment below line : 
+# --extra-index-url https://download.pytorch.org/whl/cpu
+# after uncommenting any one of the above uncomment below lines
+# torch
+# torchvision
+# torchaudio
+
+# --- LangChain Ecosystem ---
+langchain
+langchain-core
+langchain-community
+langchain-experimental
+langchain-docling
+langchain-classic
+langchain-huggingface
+langchain-groq
+langchain-qdrant
+langgraph
+langgraph-checkpoint-postgres
+
+# --- Vector Database & Retrieval ---
+qdrant-client
+fastembed
+flashrank
+
+# --- PDF Processing (Docling) ---
+docling
+docling-core
+
+# --- Model Hubs & Transformers ---
+transformers
+sentence-transformers
+huggingface-hub
+hf-xet
+
+# --- Environment & Utils ---
+python-dotenv
+pydantic
+scikit-learn
+tqdm
+colorlog
+loguru
+
+# --- Frontend ---
+streamlit
+
+# --- Database ---
+psycopg
+psycopg-pool
+psycopg[binary]
+

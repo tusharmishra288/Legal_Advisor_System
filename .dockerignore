@@ -1,0 +1,51 @@
+# --- Version Control ---
+.git
+.gitignore
+.github
+
+# --- Local Secrets (Never include in image) ---
+.env
+*.env
+secrets.toml
+
+# --- Python Caches & Build Artifacts ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+build/
+dist/
+*.egg-info/
+
+# --- Local App Data (We want the container to generate its own) ---
+logs/
+scratch/
+# Note: We ignore model_cache to keep the image slim. 
+# The Dockerfile 'Pre-bakes' the specific models we need.
+model_cache/
+huggingface/
+fastembed/
+docs/
+
+# --- Virtual Environments ---
+.venv/
+venv/
+env/
+bin/
+lib/
+
+# --- OS Metadata ---
+.DS_Store
+Thumbs.db
+
+# --- Docker Assets ---
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# --- Documentation & Assets (Optional) ---
+# Unused assets that aren't part of the RAG docs/ folder
+README.md
+LICENSE
+tests/

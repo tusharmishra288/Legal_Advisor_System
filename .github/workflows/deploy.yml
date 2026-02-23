@@ -1,0 +1,40 @@
+name: Legal Advisor Deploy 
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true # Pulls the LFS pointers/files from your repo
+
+      - name: Install and Configure Git LFS
+        run: |
+          git lfs install
+          # Ensures the runner recognizes the PDFs as LFS objects
+          git lfs track "docs/*.pdf"
+
+      - name: Force Sync to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+          SPACE_NAME: ${{ secrets.SPACE_NAME }}
+        run: |
+          # 1. Setup Git Identity
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          
+          # 2. Add HF Remote with Token
+          HF_REPO="https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME"
+          git remote add hf $HF_REPO
+          
+          # 3. The "Clean" Push
+          # We push master (local) to main (HF default)
+          # This carries the LFS pointers which HF will now accept
+          git push --force hf master:main

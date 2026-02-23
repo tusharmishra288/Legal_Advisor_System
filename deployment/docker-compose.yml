@@ -1,0 +1,36 @@
+services:
+  legal-advisor:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+      args:
+      - TARGET_ENV=local
+    container_name: legal_advisor_app
+    # Connect to your local .env file
+    env_file:
+      - ../.env
+    ports:
+      - "8501:7860"
+    volumes:
+      # Direct mount for live development (hot-reload)
+      - ..:/app
+      # Persistent storage on D-drive (via WSL filesystem)
+      - ../model_cache:/app/model_cache
+      - /app/.venv
+      - ../docs:/app/docs
+      - ../logs:/app/logs
+      - ../scratch:/app/scratch
+    environment:
+      - WATCHFILES_FORCE_POLLING=true # Essential for WSL hot-reload
+      - DEVICE_TYPE=cuda # Override for local GPU usage
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+networks:
+  default:
+    name: legal_network

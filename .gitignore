@@ -1,0 +1,30 @@
+# --- Environment & Secrets ---
+.env
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Local Databases (User History & State) ---
+# Prevents sharing specific user conversation history
+chatbot.db
+chatbot.db-journal
+
+# --- Large Model Weights & Data Caches ---
+# These are managed locally to prevent C: drive bloat and shouldn't be in Git
+model_cache/
+vec_store/
+scratch/
+
+# --- Input Documents & Logs ---
+logs/
+
+# --- UV & Build Artifacts ---
+.uv/
+dist/
+build/
+*.egg-info/
+
+# --- OS Specific Files ---
+.DS_Store
+Thumbs.db
