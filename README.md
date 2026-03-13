@@ -52,133 +52,109 @@ The system follows a modular RAG architecture with support for multiple deployme
 
 ```mermaid
 graph TB
-    A[GitHub Repository] --> B[GitHub Actions CI/CD]
-    B --> C{Hugging Face Spaces}
-    B --> D[Local Docker Deployment]
+    A[Developer] --> B[Git Push]
+    B --> C[GitHub Actions]
+    C --> D{Hugging Face Spaces}
+    C --> E{Local Docker}
 
-    C --> E[Hugging Face Infrastructure<br/>CPU Runtime]
-    D --> F[Docker Container<br/>GPU/CPU Runtime]
+    D --> F[Cloud Deployment<br/>CPU Only<br/>Auto-scaling]
+    E --> G[Local Deployment<br/>GPU/CPU<br/>Manual]
 
-    E --> G[Streamlit App<br/>Port 7860]
-    F --> G
+    F --> H[NyayaAI App<br/>Port 7860]
+    G --> H
 
-    H[Qdrant Cloud] --> G
-    I[PostgreSQL<br/>Database] --> G
+    H --> I[Qdrant Cloud]
+    H --> J[PostgreSQL]
+    H --> K[Groq API]
 
-    J[External APIs] --> G
-    J --> K[Groq LLM API]
-    J --> L[HuggingFace Hub]
-
-    style A fill:#e3f2fd
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
-    style E fill:#fce4ec
-    style F fill:#f1f8e9
-    style G fill:#e1f5fe
-    style H fill:#fff8e1
-    style I fill:#ede7f6
+    style A fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style B fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style C fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style D fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style E fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style F fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style G fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style H fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style I fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style J fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style K fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+```
 ```
 
 ### Runtime Architecture
 
 ```mermaid
-graph TB
-    A[User] --> B[Streamlit Web UI<br/>Port 7860]
-    B --> C[LangGraph Agent<br/>State Management]
+graph LR
+    A[User Query] --> B[Streamlit UI]
+    B --> C[LangGraph Agent]
 
-    C --> D[Query Classification<br/>Router]
-    D --> E[Legal Query Path]
-    D --> F[General Query Path]
+    C --> D{Query Type?}
+    D -->|Legal| E[Retrieval System]
+    D -->|General| F[Direct Response]
 
-    E --> G[Retrieval Engine]
-    G --> H[Dense Retrieval<br/>HuggingFace Embeddings<br/>intfloat/e5-small-v2]
-    G --> I[Sparse Retrieval<br/>FastEmbed BM25]
-    G --> J[Contextual Compression<br/>LangChain]
-    G --> K[FlashRank Reranker]
+    E --> G[Qdrant<br/>Vector DB]
+    G --> H[Legal Documents]
+    E --> I[Response Generation]
 
-    H --> L[Qdrant Vector Store<br/>Document Embeddings]
-    I --> L
-    M[Legal Documents<br/>Markdown/PDF] --> N[Document Processor<br/>Docling + Text Splitters]
-    N --> L
+    F --> I
+    I --> J[Groq LLM]
+    J --> K[Citation Check]
+    K --> L[Final Answer]
 
-    F --> O[Direct LLM Response]
-    G --> P[Response Generation]
+    M[PostgreSQL] --> C
+    C --> M
 
-    O --> Q[Groq LLM<br/>Llama Models]
-    P --> Q
-
-    Q --> R[Citation Auditor<br/>Legal Verification]
-    R --> S[Quality Scorer<br/>Fidelity Metrics]
-
-    S --> T[Final Response<br/>With Citations]
-
-    U[PostgreSQL] --> V[LangGraph Checkpoints<br/>Chat History<br/>Session State]
-
-    C --> V
-    T --> W[Response Cache<br/>Redis/Optional]
-
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style G fill:#fff3e0
-    style L fill:#fce4ec
-    style Q fill:#f1f8e9
-    style U fill:#e3f2fd
-    style R fill:#fff8e1
+    style A fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style B fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style C fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style D fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style E fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style F fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style G fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style H fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style I fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style J fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style K fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style L fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
+    style M fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000
 ```
 
-### Component Details
+### Key Components
 
-#### **Frontend Layer**
-- **Streamlit Web UI**: Responsive chat interface with real-time streaming
-- **Auto-scroll**: Automatic scrolling for conversation continuity
-- **Professional Styling**: Custom CSS with Inter font and dark theme
+#### **Frontend**
+- **Streamlit Web UI**: Clean chat interface for legal queries
+- **Real-time Streaming**: Live response generation with typing effects
+- **Professional Design**: Dark theme with legal-themed styling
 
-#### **Agent Layer**
-- **LangGraph Agent**: Graph-based conversation orchestration
-- **State Management**: TypedDict-based state with messages, context, and evaluation
-- **Query Routing**: Intelligent classification between legal and general queries
+#### **AI Engine**
+- **LangGraph Agent**: Orchestrates the legal research workflow
+- **Query Classification**: Routes legal vs general questions
+- **Citation Verification**: Ensures responses are grounded in legal texts
 
-#### **Retrieval Layer**
-- **Multi-Modal Retrieval**: Combines dense (semantic) and sparse (keyword) search
-- **Qdrant Vector Store**: High-performance vector database with hybrid search
-- **HuggingFace Embeddings**: `intfloat/e5-small-v2` for semantic understanding
-- **FastEmbed BM25**: Sparse retrieval for exact keyword matching
-- **FlashRank Reranker**: Result re-ranking for improved relevance
-- **Contextual Compression**: Dynamic context pruning for optimal token usage
+#### **Retrieval System**
+- **Qdrant Vector Database**: Stores legal document embeddings
+- **Hybrid Search**: Combines semantic and keyword-based retrieval
+- **Legal Knowledge Base**: 17+ Indian legal documents indexed
 
-#### **Generation Layer**
-- **Groq LLM**: Fast inference with Llama 3 models via Groq API
-- **Citation Auditor**: Automated verification against legal sources
-- **Quality Scoring**: Multi-dimensional evaluation (high/medium/low fidelity)
-- **Fallback Handling**: Graceful degradation for edge cases
+#### **LLM Integration**
+- **Groq API**: Fast inference with Llama models
+- **Quality Scoring**: Rates response accuracy and reliability
+- **Context Management**: Optimizes token usage for legal reasoning
 
-#### **Data Processing Layer**
-- **Document Processor**: Docling-based PDF/document conversion
-- **Text Splitters**: Hierarchical splitting (headers + recursive)
-- **Legal Knowledge Base**: Curated collection of Indian legal documents
-- **Incremental Updates**: Support for adding new legal documents
+#### **Data Storage**
+- **PostgreSQL**: Conversation history and session persistence
+- **Model Caching**: FastEmbed and HuggingFace model storage
+- **Document Processing**: PDF to markdown conversion pipeline
 
-#### **Persistence Layer**
-- **PostgreSQL**: ACID-compliant storage for chat history and checkpoints
-- **LangGraph Checkpoints**: Conversation state persistence across sessions
-- **Model Caching**: HuggingFace and FastEmbed model persistence
-- **Log Management**: Structured logging with rotation
+### How It Works
 
-#### **Deployment Layer**
-- **Docker Containerization**: Multi-stage builds with UV package manager
-- **Hugging Face Spaces**: One-click cloud deployment with CPU optimization
-- **GitHub Actions CI/CD**: Automated deployment pipeline with Git LFS support
-- **Environment Flexibility**: Local GPU vs Cloud CPU configurations
-- **Volume Management**: Persistent storage for models, logs, and documents
-
-### Data Flow
-
-1. **Document Ingestion**: Legal documents → Docling processing → Text splitting → Embedding generation → Qdrant indexing
-2. **Query Processing**: User query → Classification → Retrieval (dense + sparse) → Reranking → Context compression
-3. **Response Generation**: Retrieved context + query → Groq LLM → Citation audit → Quality scoring → Final response
-4. **State Management**: Conversation history → PostgreSQL checkpoints → Session persistence
+1. **User asks a legal question** → Streamlit UI captures input
+2. **Query gets classified** → Legal questions go to retrieval, general questions get direct answers
+3. **Legal documents searched** → Qdrant finds relevant sections using vector similarity
+4. **Context assembled** → Most relevant legal text combined with user question
+5. **LLM generates response** → Groq API creates accurate, cited legal guidance
+6. **Quality verified** → Response checked against source documents
+7. **Answer delivered** → Formatted response with citations and confidence score
 
 ### Security & Performance
 
@@ -238,26 +214,80 @@ The system includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) t
   - `GROQ_API_KEY`: For LLM inference
   - `QDRANT_URL`: Qdrant vector database URL
   - `QDRANT_API_KEY`: Qdrant API key
+  - `POSTGRES_URI`: Neon cloud database connection string
   - `HF_TOKEN`: HuggingFace token (optional, for model downloads)
 
-**Environment Setup:**
+**Quick Start Commands:**
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd Legal_Advisor_System
-   ```
+```bash
+# 1. Clone and setup
+git clone <repository-url>
+cd Legal_Advisor_System
+cp .env.example .env
+# Edit .env with your API keys
 
-2. **Create environment file**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your API keys
-   ```
+# 2. Build and run (GPU-enabled for local development)
+docker-compose up --build
 
-3. **Build and run with Docker Compose**:
-   ```bash
-   docker-compose up --build
-   ```
+# 3. Access the app
+# Open http://localhost:8501 in your browser
+```
+
+**Alternative Docker Commands:**
+
+```bash
+# Build image manually
+docker build -t legal_advisor_app --build-arg TARGET_ENV=local .
+
+# Run with GPU support
+docker run --rm -p 8501:7860 \
+  --gpus all \
+  -v $(pwd)/model_cache:/app/model_cache \
+  -v $(pwd)/logs:/app/logs \
+  --env-file .env \
+  legal_advisor_app
+
+# Run CPU-only
+docker run --rm -p 8501:7860 \
+  -v $(pwd)/model_cache:/app/model_cache \
+  -v $(pwd)/logs:/app/logs \
+  --env-file .env \
+  legal_advisor_app
+```
+
+### Deployment Comparison
+
+| Feature | Hugging Face Spaces | Local Docker |
+|---------|-------------------|--------------|
+| **Setup Time** | 5 minutes | 15 minutes |
+| **Cost** | Free tier available | Local hardware costs |
+| **GPU Support** | CPU only | Full GPU support |
+| **Persistence** | Automatic | Manual volume mounting |
+| **Scaling** | Auto-scaling | Single instance |
+| **Internet Access** | Public URL | Local only |
+| **Commands** | `git push` | `docker-compose up` |
+
+### Deployment Configuration
+
+#### Docker Build Arguments
+- `TARGET_ENV=local`: Uses GPU-enabled PyTorch (cu126) for local development
+- `TARGET_ENV=cloud`: Uses CPU-only PyTorch for cloud deployment (Hugging Face)
+
+#### Port Configuration
+- **Local**: Host port `8501` → Container port `7860`
+- **Hugging Face**: Automatic port assignment (typically 7860)
+
+#### Persistent Volumes (Local Deployment)
+- `model_cache`: HuggingFace and FastEmbed model cache
+- `docs`: Additional legal documents
+- `logs`: Application logs
+- `scratch`: Processed document chunks
+
+#### Environment Variables
+- `DEVICE_TYPE`: `cuda` for GPU, `cpu` for CPU-only
+- `WATCHFILES_FORCE_POLLING`: `true` for development hot-reload
+- `PGCHANNELBINDING`: `disable` for PostgreSQL compatibility
+- `UV_SYSTEM_PYTHON`: `1` for UV package manager
 
 ### Deployment Configuration
 
