@@ -52,13 +52,20 @@ The system follows a modular RAG architecture. The runtime behavior is the same 
 
 ```mermaid
 flowchart TB
-    subgraph Ingestion
+    subgraph "Ingestion Stage"
         X[Legal Documents] --> Y[Qdrant Vector Store]
     end
 
-    subgraph Runtime
-        Z[Streamlit App] --> C[LangGraph Agent]
-        C --> D{Query Type?}
+    subgraph "Persistence Stage"
+        M[Neon Checkpoints]
+    end
+
+    subgraph "Interaction Stage"
+        Z[Streamlit App]
+    end
+
+    subgraph "Processing Stage"
+        C[LangGraph Agent] --> D{Query Type?}
         D -->|"LEGAL"| E[Retrieve Legal Context]
         D -->|"CHAT"| F[Chat Persona Response]
 
@@ -69,16 +76,20 @@ flowchart TB
         J --> K[Final Answer]
 
         F --> K
-
-        K --> L[Hugging Face Spaces]
-        L --> Z
-
-        M[Neon Checkpoints] --> C
-        C --> M
     end
 
+    subgraph "Deployment Stage"
+        L[Hugging Face Spaces]
+    end
+
+    Y --> G
+    M --> C
+    Z --> C
+    K --> L
+    L --> Z
+
     classDef box fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
-    class Z,C,D,E,F,G,H,I,J,K,L,M,X,Y box;
+    class X,Y,Z,C,D,E,F,G,H,I,J,K,L,M box;
 ```
 > **Note:** The runtime logic (retrieval, LLM, citation auditing) stays the same regardless of deployment. Local Docker deployment is detailed in the deployment section below.
 
