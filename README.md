@@ -77,7 +77,7 @@ The system follows a modular RAG architecture. The runtime behavior is the same 
 
 ```mermaid
 flowchart TB
-    subgraph "Ingestion Stage (ETL Pipeline)"
+    subgraph "Ingestion Layer"
         A[Official Gazette PDFs] --> B[Data Refiner]
         B -->|Structured Markdown| C[(Qdrant Vector Store)]
     end
@@ -86,7 +86,7 @@ flowchart TB
         D[(Neon PostgreSQL)]
     end
 
-    subgraph "Agentic Reasoning Stage (LangGraph)"
+    subgraph "Agentic Reasoning Layer"
         E[Streamlit UI] <--> F[LangGraph Orchestrator]
         F <--> D
         
