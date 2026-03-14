@@ -289,8 +289,8 @@ with st.sidebar:
         1. <b>Workspace Strategy:</b> Use 1 workspace for 1 type of advisory (e.g. Criminal vs Civil) for maximum semantic focus.<br><br>
         2. <b>Audit Check:</b> Review the Fidelity Card at the bottom of each block. If low, click 'Regenerate Analysis'.<br><br>
         <b>Prompt Examples:</b><br>
-        - <i>'Define 'Community Service' as a new form of punishment in the BNSS'</i>
-        - <i>'What are the safe harbor protections for 'Intermediaries' under the IT Act?'</i>
+        - <i>'Define 'Community Service' as a new form of punishment in the BNSS'</i><br>
+        - <i>'What are the safe harbor protections for 'Intermediaries' under the IT Act?'</i><br>
         - <i>'How is 'Digital Evidence' authenticated under Section 63 of the BSA?'</i>
         </div>""", unsafe_allow_html=True)
 
