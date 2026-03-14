@@ -1,11 +1,11 @@
 services:
-  legal-advisor:
+  nyayai-app:
     build:
       context: ..
       dockerfile: Dockerfile
       args:
       - TARGET_ENV=local
-    container_name: legal_advisor_app
+    container_name: nyayai-app
     # Connect to your local .env file
     env_file:
       - ../.env
@@ -33,4 +33,4 @@ services:
 
 networks:
   default:
-    name: legal_network
+    name: nyayai_network
