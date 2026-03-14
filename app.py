@@ -5,6 +5,7 @@ import streamlit as st
 from src.config import DB_URI
 from src.agent import create_graph
 from src.engine import get_vector_store
+from src.processor import run_ingestion_pipeline
 from src.keep_alive import start_keep_alive_service
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.messages import HumanMessage, AIMessage
@@ -94,7 +95,18 @@ def init_system_core():
                 cur.execute("CREATE TABLE audit_logs (thread_id TEXT, message_id TEXT, score INTEGER, feedback TEXT, PRIMARY KEY (thread_id, message_id));")
 
     # Initialize vector store for legal document retrieval
-    get_vector_store()
+    vector_store = get_vector_store()
+    #ingestion check - if no points, trigger ingestion pipeline to populate the knowledge base
+    try:
+        # Check point count in your Qdrant collection
+        status = vector_store.client.get_collection("indian_legal_library")
+        if status.points_count == 0:
+            with st.spinner("📥 Legal Knowledge Base is empty. Re-ingesting 17 Statutes..."):
+                run_ingestion_pipeline()
+    except Exception:
+        # If collection doesn't even exist, trigger pipeline
+        with st.spinner("🆕 Initializing Statutory Library for the first time..."):
+            run_ingestion_pipeline()
     # Create and return the LangGraph agent with PostgreSQL checkpointing
     return pool, create_graph(PostgresSaver(pool))
 
