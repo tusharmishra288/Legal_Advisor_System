@@ -102,11 +102,11 @@ def init_system_core():
         status = vector_store.client.get_collection("indian_legal_library")
         if status.points_count == 0:
             with st.spinner("📥 Legal Knowledge Base is empty. Re-ingesting 17 Statutes..."):
-                run_ingestion_pipeline()
+                run_ingestion_pipeline(vector_store)
     except Exception:
         # If collection doesn't even exist, trigger pipeline
         with st.spinner("🆕 Initializing Statutory Library for the first time..."):
-            run_ingestion_pipeline()
+            run_ingestion_pipeline(vector_store)
     # Create and return the LangGraph agent with PostgreSQL checkpointing
     return pool, create_graph(PostgresSaver(pool))
 
