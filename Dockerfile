@@ -29,7 +29,9 @@ WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     HF_HOME=/app/model_cache/huggingface \
-    FASTEMBED_CACHE_PATH=/app/model_cache/fastembed
+    FASTEMBED_CACHE_PATH=/app/model_cache/fastembed \
+    PYTHONWARNINGS="ignore::FutureWarning" \
+    TRANSFORMERS_VERBOSITY=error
 
 # Copy blueprints
 COPY pyproject.toml uv.lock ./
