@@ -113,14 +113,15 @@ def init_system_core():
         # If collection doesn't even exist, trigger pipeline
         with st.spinner("🆕 Initializing Statutory Library for the first time..."):
             run_ingestion_pipeline(vector_store)
+    # Start keep-alive inside cache_resource so it only runs once, not on every
+    # Streamlit script re-run (which happens on each user connection).
+    start_keep_alive_service(interval_minutes=10)
+
     # Create and return the LangGraph agent with PostgreSQL checkpointing
     return pool, create_graph(PostgresSaver(pool))
 
 # Initialize the core system components
 pool, graph = init_system_core()
-
-# This prevents the app and Qdrant Cloud from sleeping due to inactivity
-keep_alive_service = start_keep_alive_service(interval_minutes=10)
 
 # --- 4. Persistent Logic Utilities ---
 # Utility functions for workspace management and audit logging

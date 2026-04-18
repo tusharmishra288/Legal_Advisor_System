@@ -9,11 +9,17 @@ Centralizes all system configuration including:
 """
 
 import os
+import warnings
 import torch
 from pathlib import Path
 from loguru import logger
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
+
+# Suppress transformers 5.x lazy-loader __path__ deprecation spam that fires for
+# every vision model in the registry on import — harmless but floods the logs.
+os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
+warnings.filterwarnings("ignore", message="Accessing `__path__`")
 
 # --- Directory Structure ---
 # Project root and core directories for legal document processing
